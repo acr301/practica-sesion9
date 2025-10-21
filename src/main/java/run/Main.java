@@ -2,6 +2,7 @@ package run;
 
 import entities.Autor;
 import entities.Categoria;
+import entities.Libro;
 import services.dao.MyDao;
 import services.interfaces.ICRUD;
 
@@ -70,6 +71,33 @@ public class Main {
      /*
         CRUD de libro
      */
+
+    public static void insertarLibro() {
+        Libro libro = new Libro();
+        libro.setTitulo("Cien Años de Soledad");
+        libro.setAnioPub(1967);
+        // Asignar autor y categoria
+        dao.insert(libro);
+    }
+
+    public static void listarLibros() {
+        System.out.println("Libros Almacenados");
+        List<Libro> libros = dao.getAll("libros", Libro.class);
+        libros.forEach(libro -> System.out.println(libro.getTitulo()));
+    }
+
+    public static void editarLibro() {
+        Libro l = new Libro();
+        l = dao.findById(1, Libro.class);
+        l.setAnioPub(1970);
+        dao.update(l);
+    }
+
+    public void eliminarLibro() {
+        Libro l = new Libro();
+        l = dao.findById(1, Libro.class);
+        dao.delete(l);
+    }
 
 
 
