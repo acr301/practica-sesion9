@@ -1,6 +1,7 @@
 package run;
 
 import entities.Autor;
+import entities.Categoria;
 import services.dao.MyDao;
 import services.interfaces.ICRUD;
 
@@ -40,6 +41,38 @@ public class Main {
         dao.delete(a);
     }
 
+    /*
+        CRUD de categoria
+     */
+    public static void insertarCategoria() {
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Novela");
+    }
+
+    public static void listarCategorias() {
+        System.out.println("Categorias Almacenados");
+        List<Categoria> categorias = dao.getAll("categorias.All", Categoria.class);
+        categorias.forEach(categoria -> System.out.println(categoria.getNombre()));
+    }
+
+    public static void editarCategoria() {
+        Categoria c = new Categoria();
+        c = dao.findById(1, Categoria.class);
+        c.setNombre("Realismo Mágico");
+        dao.update(c);
+    }
+    public static void eliminarCategoria() {
+        Categoria c = new Categoria();
+        c = dao.findById(1, Categoria.class);
+        dao.delete(c);
+
+    }
+     /*
+        CRUD de libro
+     */
+
+
+
     public static void main(String[] args) {
         insertarAutor();
         listarAutores();
@@ -47,5 +80,20 @@ public class Main {
         listarAutores();
         eliminarAutor();
         listarAutores();
+
+        /*
+            prueba crud categoria
+         */
+
+        insertarCategoria();
+        listarCategorias();
+        editarCategoria();
+        listarCategorias();
+        eliminarCategoria();
+        listarCategorias();
+
+        /*
+            prueba crud libro
+         */
     }
 }
