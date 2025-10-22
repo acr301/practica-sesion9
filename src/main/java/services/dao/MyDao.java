@@ -1,5 +1,8 @@
 package services.dao;
 
+import entities.Autor;
+import entities.Categoria;
+import entities.Libro;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import services.interfaces.ICRUD;
@@ -86,9 +89,9 @@ public class MyDao implements ICRUD {
         EntityManager em = JPAConexion.getEntityManager();
         try {
             em.getTransaction().begin();
-            Object libro = em.find(Class.forName("entities.Libro"), libroId);
-            Object autor = em.find(Class.forName("entities.Autor"), autorId);
-            Object categoria = em.find(Class.forName("entities.Categoria"), categoriaId);
+            Libro libro = em.find(Libro.class, libroId);
+            Autor autor = em.find(Autor.class, autorId);
+            Categoria categoria = em.find(Categoria.class, categoriaId);
 
             if (libro == null) {
                 System.out.println("No se encontró el libro con id: " + libroId);
@@ -106,14 +109,8 @@ public class MyDao implements ICRUD {
                 return;
             }
 
-            // Usamos reflection segura: las entidades tienen setters estándar
-            // Esto evita dependencias fuertes en el paquete entities desde el DAO.
-            Class<?> libroClass = libro.getClass();
-            Class<?> autorClass = autor.getClass();
-            Class<?> categoriaClass = categoria.getClass();
-
-            libroClass.getMethod("setAutor", autorClass).invoke(libro, autor);
-            libroClass.getMethod("setCategoria", categoriaClass).invoke(libro, categoria);
+            libro.setAutor(autor);
+            libro.setCategoria(categoria);
 
             em.merge(libro);
             em.getTransaction().commit();
@@ -124,5 +121,20 @@ public class MyDao implements ICRUD {
         } finally {
             em.close();
         }
+    }
+
+    // Nuevo: obtener libro con relaciones inicializadas para evitar lazy issues
+    public Libro findLibroWithRelations(Long id) {
+        EntityManager em = JPAConexion.getEntityManager();
+        try {
+            Libro libro = em.find(Libro.class, id);
+            if (libro != null) {
+                if (libro.getAutor() != null) libro.getAutor().getNombre();
+                if (libro.getCategoria() != null) libro.getCategoria().getNombre();
+            }
+            return libro;
+        } catch (Exception ex) { ex.printStackTrace(); }
+        finally { em.close(); }
+        return null;
     }
     }
