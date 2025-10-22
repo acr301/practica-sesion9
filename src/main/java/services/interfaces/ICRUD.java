@@ -6,5 +6,6 @@ public interface ICRUD {
     <T>void insert(T entity);
     <T>void update(T entity);
     <T>void delete(T entity);
+    <T> T findById(Long id, Class<T> clazz);
     <T> T findById(Integer id, Class<T> clazz);
 }
